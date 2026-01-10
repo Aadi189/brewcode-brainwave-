@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+requests
+beautifulsoup4
+lxml
+newspaper3k
+praw
+yfinance
+finnhub-python
+torch
+transformers
+scikit-learn
+pandas
+numpy
+python-dotenv
+sqlmodel
+loguru
