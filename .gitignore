@@ -9,7 +9,12 @@ __pycache__/
 
 # Virtual environment
 venv/
+# Ignore ALL env files
 .env
+.env.*
+*.env
+**/.env
+**/.env.*
 .env.local
 .env.*.local
 
