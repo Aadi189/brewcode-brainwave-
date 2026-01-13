@@ -14,6 +14,7 @@ export const Signin = () => {
     });
     if (error) {
       setMessage(error.message);
+      console.log(email, password);
     } else {
       setMessage("Signin successful! Welcome back.");
       const {data}=await supabase.auth.getSession();

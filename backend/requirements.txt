@@ -15,3 +15,7 @@ numpy
 python-dotenv
 sqlmodel
 loguru
+PyJWT
+python-multipart
+httpx
+cryptography
