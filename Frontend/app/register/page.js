@@ -1,12 +1,13 @@
+"use client"
 import { useState } from "react"
-import { supabase } from "../lib/supabaseClient"
-import { useNavigate } from "react-router-dom"
+import { useRouter } from "next/navigation"
+import { supabase } from "../../utils/supabaseClient"
 
-export const Register = () => {
+export default function Register() {
+  const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [message, setMessage] = useState("")
-  const navigate=useNavigate()
 
   const handleregister = async () => {
     const { data, error } = await supabase.auth.signUp({
@@ -16,7 +17,6 @@ export const Register = () => {
       setMessage(error.message)
     } else {
       setMessage("Registration successful! Please check your email to verify your account.")
-      navigate("/signin")
       console.log(data)
     }
   }
