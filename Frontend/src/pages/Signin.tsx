@@ -17,10 +17,10 @@ export const Signin = () => {
       console.log(email, password);
     } else {
       setMessage("Signin successful! Welcome back.");
-      const {data}=await supabase.auth.getSession();
-      const accessToken=data.session?.access_token;
-      if(accessToken){
-        localStorage.setItem("token",accessToken);
+      const { data } = await supabase.auth.getSession();
+      const accessToken = data.session?.access_token;
+      if (accessToken) {
+        localStorage.setItem("token", accessToken);
       }
       navigate("/")
     }
