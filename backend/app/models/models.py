@@ -14,14 +14,13 @@ class NewsResponse(BaseModel):
     articles: List[NewsArticle]
 
 
-class RedditPost(BaseModel):
-    title: str
-    url: str
-    score: int
-    comments: int
-    created_at: str
-    subreddit: str
-    sentiment: float | None = None
+class TelegramPost(BaseModel):
+    text: str
+    date: str
+    sender_id: int | None = None
+    views: int | None = None
+    forwards: int | None = None
+    channel: str
 
 
 class StockInfo(BaseModel):
@@ -33,3 +32,17 @@ class StockInfo(BaseModel):
     average_volume: float
     volume_spike: bool
     price_change_last_2h: float
+
+
+class Shareholding(BaseModel):
+    promoter: float
+    fii: float
+    dii: float
+    retail: float
+    mf: float
+    pledge: float
+    promoter_change: Optional[float]
+    fii_change: Optional[float]
+    dii_change: Optional[float]
+    retail_change: Optional[float]
+    mf_change: Optional[float]

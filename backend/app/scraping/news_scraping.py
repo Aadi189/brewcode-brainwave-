@@ -59,9 +59,3 @@ def google_news_scraper(company: str, ticker: str) -> list[NewsArticle]:
     # Deduplicate based on URL
     unique = {a.url: a for a in articles}
     return list(unique.values())
-
-
-list = google_news_scraper("TATA POWER", "TATAPOWER")
-for item in list:
-    print(item.headline, item.summary)
-    print("---------------------------------------------------")

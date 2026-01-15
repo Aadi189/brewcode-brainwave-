@@ -39,7 +39,7 @@ def stock_info(ticker: str) -> StockInfo:
 
     # Volume spike detection
     avg_vol = stock.info.get("averageVolume", 0) or 0
-    vol = int(latest["Volume"])
+    vol = int(latest["Volume"] or 0)
     volume_spike = vol > (2.5 * avg_vol) if avg_vol else False
 
     return StockInfo(
@@ -52,6 +52,3 @@ def stock_info(ticker: str) -> StockInfo:
         volume_spike=volume_spike,
         price_change_last_2h=price_2h_change,
     )
-
-
-print(stock_info("TATAPOWER.NS"))

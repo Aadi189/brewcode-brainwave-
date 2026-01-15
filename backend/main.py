@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from app.api import profile
 from app.middlewares.user import auth_middleware
+from app.api.analysis_routes import router as analysis_router
 
 load_dotenv()
 
@@ -24,10 +25,11 @@ app.add_middleware(
 )
 
 # Auth middleware (innermost - runs second, after CORS)
-app.middleware("http")(auth_middleware)
+# app.middleware("http")(auth_middleware)
 
 # Include routers with prefix for better organization
 app.include_router(profile.router, prefix="/api", tags=["profile"])
+app.include_router(analysis_router, prefix="/api", tags=["analysis"])
 
 
 @app.get("/")
