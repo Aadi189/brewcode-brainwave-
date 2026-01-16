@@ -1,0 +1,379 @@
+"""
+AI-Enhanced Multi-Agent Risk Detection System
+==============================================
+
+Integrates OnDemand AI platform to enhance the multi-agent risk detection system with:
+- LLM-powered pattern recognition
+- Intelligent sentiment analysis
+- Advanced manipulation detection
+- Natural language explanations
+- Predictive analytics
+"""
+
+from typing import Dict, List, Optional, Any
+from datetime import datetime
+import asyncio
+from dataclasses import dataclass, field
+
+from app.ai.multi_agent_risk_system import (
+    MultiAgentRiskSystem,
+    AgentType,
+    RiskLevel,
+    AgentSignal,
+    UnifiedRiskAssessment,
+)
+from app.ai.ondemand_client import get_ondemand_client
+
+
+@dataclass
+class AIEnhancedRiskAssessment:
+    """Enhanced risk assessment with AI insights"""
+
+    # Original assessment
+    base_assessment: UnifiedRiskAssessment
+
+    # AI enhancements
+    llm_manipulation_score: float  # 0-100 from LLM analysis
+    llm_confidence: float  # 0-1
+    manipulation_type: str
+    key_red_flags: List[str]
+    llm_reasoning: str
+    recommended_action: str
+
+    # Predictive analytics
+    predicted_outcome: str
+    prediction_confidence: float
+    timeline_days: int
+    monitoring_points: List[str]
+
+    # Enhanced explanation
+    ai_generated_explanation: str
+
+    # Sentiment analysis
+    news_sentiment_scores: List[Dict[str, Any]] = field(default_factory=list)
+
+    # Combined final score (base + AI)
+    final_risk_score: float = 0.0
+    final_risk_level: RiskLevel = RiskLevel.LOW
+
+    timestamp: datetime = field(default_factory=datetime.now)
+
+
+class AIEnhancedRiskSystem:
+    """
+    Multi-agent risk detection system enhanced with OnDemand AI
+
+    This system combines traditional rule-based agents with LLM-powered
+    intelligence for superior manipulation detection.
+    """
+
+    def __init__(
+        self,
+        use_ai_enhancement: bool = True,
+        ai_weight: float = 0.3,
+        enable_predictions: bool = True,
+        enable_sentiment: bool = True,
+    ):
+        """
+        Initialize AI-enhanced risk system
+
+        Args:
+            use_ai_enhancement: Whether to use OnDemand AI enhancements
+            ai_weight: Weight of AI score in final calculation (0-1)
+            enable_predictions: Enable outcome predictions
+            enable_sentiment: Enable AI sentiment analysis
+        """
+        self.base_system = MultiAgentRiskSystem()
+        self.ondemand_client = get_ondemand_client() if use_ai_enhancement else None
+        self.use_ai_enhancement = use_ai_enhancement
+        self.ai_weight = ai_weight
+        self.enable_predictions = enable_predictions
+        self.enable_sentiment = enable_sentiment
+
+    async def analyze_with_ai(
+        self,
+        symbol: str,
+        shareholding_data: Optional[Dict] = None,
+        delivery_data: Optional[List[Dict]] = None,
+        price_data: Optional[List[Dict]] = None,
+        ohlcv_data: Optional[Dict[str, List[Dict]]] = None,
+        bulk_deals: Optional[List[Dict]] = None,
+        block_deals: Optional[List[Dict]] = None,
+        news_articles: Optional[List[Dict]] = None,
+        social_posts: Optional[List[Dict]] = None,
+        historical_data: Optional[Dict] = None,
+        include_shareholding: bool = True,
+        include_delivery: bool = True,
+        include_microstructure: bool = True,
+        include_deals: bool = True,
+        include_news: bool = True,
+    ) -> AIEnhancedRiskAssessment:
+        """
+        Perform AI-enhanced risk analysis
+
+        Args:
+            symbol: Stock symbol
+            [data parameters]: Same as base system
+            [include parameters]: Same as base system
+
+        Returns:
+            AI-enhanced risk assessment
+        """
+        # Step 1: Run base multi-agent analysis
+        base_assessment = self.base_system.analyze(
+            symbol=symbol,
+            shareholding_data=shareholding_data,
+            delivery_data=delivery_data,
+            price_data=price_data,
+            ohlcv_data=ohlcv_data,
+            bulk_deals=bulk_deals,
+            block_deals=block_deals,
+            news_articles=news_articles,
+            social_posts=social_posts,
+            include_shareholding=include_shareholding,
+            include_delivery=include_delivery,
+            include_microstructure=include_microstructure,
+            include_deals=include_deals,
+            include_news=include_news,
+        )
+
+        if not self.use_ai_enhancement or not self.ondemand_client:
+            # Return base assessment wrapped in AI format
+            return self._wrap_base_assessment(base_assessment)
+
+        # Step 2: Prepare data for AI analysis
+        stock_data = self._prepare_stock_data(
+            symbol=symbol,
+            shareholding_data=shareholding_data,
+            delivery_data=delivery_data,
+            price_data=price_data,
+            bulk_deals=bulk_deals,
+            block_deals=block_deals,
+        )
+
+        agent_signals_dict = [
+            {
+                "agent_type": signal.agent_type.value,
+                "risk_score": signal.risk_score,
+                "confidence": signal.confidence,
+                "signals": signal.signals,
+                "metadata": signal.metadata,
+            }
+            for signal in base_assessment.agent_signals
+        ]
+
+        # Step 3: Run AI enhancements in parallel
+        tasks = []
+
+        # Task 1: LLM manipulation detection
+        tasks.append(
+            self.ondemand_client.detect_manipulation_patterns(
+                stock_data=stock_data, agent_signals=agent_signals_dict
+            )
+        )
+
+        # Task 2: AI-generated explanation
+        tasks.append(
+            self.ondemand_client.generate_risk_explanation(
+                symbol=symbol,
+                risk_score=base_assessment.overall_risk_score,
+                agent_signals=agent_signals_dict,
+                market_context=stock_data,
+            )
+        )
+
+        # Task 3: Sentiment analysis (if enabled and news available)
+        if self.enable_sentiment and news_articles:
+            news_texts = [
+                f"{article.get('headline', '')} {article.get('summary', '')}"
+                for article in news_articles[:20]  # Limit to 20 articles
+            ]
+            tasks.append(self.ondemand_client.analyze_sentiment(news_texts))
+        else:
+            tasks.append(asyncio.sleep(0))  # Dummy task
+
+        # Task 4: Outcome prediction (if enabled and historical data available)
+        if self.enable_predictions and historical_data:
+            tasks.append(
+                self.ondemand_client.predict_outcome(
+                    symbol=symbol,
+                    historical_data=historical_data,
+                    current_signals=agent_signals_dict,
+                )
+            )
+        else:
+            tasks.append(asyncio.sleep(0))  # Dummy task
+
+        # Execute all AI tasks in parallel
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        # Parse results
+        manipulation_analysis = (
+            results[0] if not isinstance(results[0], Exception) else {}
+        )
+        ai_explanation = results[1] if not isinstance(results[1], Exception) else ""
+        sentiment_scores = (
+            results[2]
+            if not isinstance(results[2], Exception) and isinstance(results[2], list)
+            else []
+        )
+        prediction = (
+            results[3]
+            if not isinstance(results[3], Exception) and isinstance(results[3], dict)
+            else {}
+        )
+
+        # Step 4: Combine base score with AI score
+        llm_score = manipulation_analysis.get("manipulation_likelihood", 0)
+        final_score = (
+            base_assessment.overall_risk_score * (1 - self.ai_weight)
+            + llm_score * self.ai_weight
+        )
+
+        # Determine final risk level
+        if final_score >= 75:
+            final_risk_level = RiskLevel.CRITICAL
+        elif final_score >= 50:
+            final_risk_level = RiskLevel.HIGH
+        elif final_score >= 25:
+            final_risk_level = RiskLevel.MEDIUM
+        else:
+            final_risk_level = RiskLevel.LOW
+
+        # Step 5: Create enhanced assessment
+        return AIEnhancedRiskAssessment(
+            base_assessment=base_assessment,
+            llm_manipulation_score=llm_score,
+            llm_confidence=manipulation_analysis.get("confidence", 0),
+            manipulation_type=manipulation_analysis.get("manipulation_type", "unknown"),
+            key_red_flags=manipulation_analysis.get("key_red_flags", []),
+            llm_reasoning=manipulation_analysis.get("reasoning", ""),
+            recommended_action=manipulation_analysis.get("recommended_action", ""),
+            predicted_outcome=prediction.get("predicted_outcome", "unknown"),
+            prediction_confidence=prediction.get("confidence", 0),
+            timeline_days=prediction.get("timeline_days", 0),
+            monitoring_points=prediction.get("monitoring_points", []),
+            ai_generated_explanation=ai_explanation,
+            news_sentiment_scores=sentiment_scores,
+            final_risk_score=final_score,
+            final_risk_level=final_risk_level,
+        )
+
+    def _prepare_stock_data(
+        self,
+        symbol: str,
+        shareholding_data: Optional[Dict],
+        delivery_data: Optional[List[Dict]],
+        price_data: Optional[List[Dict]],
+        bulk_deals: Optional[List[Dict]],
+        block_deals: Optional[List[Dict]],
+    ) -> Dict[str, Any]:
+        """Prepare stock data for AI analysis"""
+        return {
+            "symbol": symbol,
+            "shareholding": shareholding_data or {},
+            "delivery": delivery_data[-5:] if delivery_data else [],  # Last 5 days
+            "price": price_data[-10:] if price_data else [],  # Last 10 days
+            "bulk_deals_count": len(bulk_deals) if bulk_deals else 0,
+            "block_deals_count": len(block_deals) if block_deals else 0,
+        }
+
+    def _wrap_base_assessment(
+        self, base_assessment: UnifiedRiskAssessment
+    ) -> AIEnhancedRiskAssessment:
+        """Wrap base assessment when AI is disabled"""
+        return AIEnhancedRiskAssessment(
+            base_assessment=base_assessment,
+            llm_manipulation_score=0,
+            llm_confidence=0,
+            manipulation_type="ai_disabled",
+            key_red_flags=[],
+            llm_reasoning="AI enhancement disabled",
+            recommended_action="Review base assessment",
+            predicted_outcome="unknown",
+            prediction_confidence=0,
+            timeline_days=0,
+            monitoring_points=[],
+            ai_generated_explanation="AI enhancement is disabled. Using base multi-agent analysis only.",
+            news_sentiment_scores=[],
+            final_risk_score=base_assessment.overall_risk_score,
+            final_risk_level=base_assessment.risk_level,
+        )
+
+    def to_dict(self, assessment: AIEnhancedRiskAssessment) -> Dict[str, Any]:
+        """Convert assessment to dictionary for API response"""
+        base_dict = {
+            "symbol": assessment.base_assessment.symbol,
+            "timestamp": assessment.timestamp.isoformat(),
+            # Base scores
+            "base_risk_score": assessment.base_assessment.overall_risk_score,
+            "base_risk_level": assessment.base_assessment.risk_level.value,
+            # AI-enhanced scores
+            "ai_manipulation_score": assessment.llm_manipulation_score,
+            "ai_confidence": assessment.llm_confidence,
+            "final_risk_score": assessment.final_risk_score,
+            "final_risk_level": assessment.final_risk_level.value,
+            # AI insights
+            "manipulation_type": assessment.manipulation_type,
+            "key_red_flags": assessment.key_red_flags,
+            "ai_reasoning": assessment.llm_reasoning,
+            "recommended_action": assessment.recommended_action,
+            # Predictions
+            "predicted_outcome": assessment.predicted_outcome,
+            "prediction_confidence": assessment.prediction_confidence,
+            "timeline_days": assessment.timeline_days,
+            "monitoring_points": assessment.monitoring_points,
+            # Explanations
+            "ai_explanation": assessment.ai_generated_explanation,
+            "base_explanation": assessment.base_assessment.explanation,
+            # Agent signals
+            "agent_signals": [
+                {
+                    "agent_type": signal.agent_type.value,
+                    "risk_score": signal.risk_score,
+                    "confidence": signal.confidence,
+                    "signals": signal.signals,
+                    "metadata": signal.metadata,
+                }
+                for signal in assessment.base_assessment.agent_signals
+            ],
+            # Agent contributions
+            "agent_contributions": {
+                agent_type.value: contribution
+                for agent_type, contribution in assessment.base_assessment.agent_contributions.items()
+            },
+            # Co-occurrence amplifications
+            "co_occurrence_amplifications": [
+                {
+                    "agent1": agent1.value,
+                    "agent2": agent2.value,
+                    "amplification_bonus": bonus,
+                }
+                for agent1, agent2, bonus in assessment.base_assessment.co_occurrence_amplifications
+            ],
+            # Sentiment scores
+            "news_sentiment": assessment.news_sentiment_scores,
+            # Metadata
+            "ai_enhanced": self.use_ai_enhancement,
+            "ai_weight": self.ai_weight,
+        }
+
+        return base_dict
+
+
+# Singleton instance
+_ai_enhanced_system: Optional[AIEnhancedRiskSystem] = None
+
+
+def get_ai_enhanced_system(
+    use_ai: bool = True, ai_weight: float = 0.3
+) -> AIEnhancedRiskSystem:
+    """Get or create AI-enhanced risk system singleton"""
+    global _ai_enhanced_system
+
+    if _ai_enhanced_system is None:
+        _ai_enhanced_system = AIEnhancedRiskSystem(
+            use_ai_enhancement=use_ai, ai_weight=ai_weight
+        )
+
+    return _ai_enhanced_system

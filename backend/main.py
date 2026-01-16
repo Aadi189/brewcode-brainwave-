@@ -13,8 +13,9 @@ from app.api.shareholding_routes import router as shareholding_router
 from app.api.market_routes import router as market_router
 from app.api.pattern_routes import router as pattern_router
 from app.api.risk_routes import router as risk_router
+from app.api.multi_agent_analysis import router as multi_agent_router
+from app.api.ai_enhanced_routes import router as ai_enhanced_router
 
-j
 load_dotenv()
 
 app = FastAPI(
@@ -50,6 +51,8 @@ app.include_router(shareholding_router, prefix="/api", tags=["shareholding"])
 app.include_router(market_router, prefix="/api", tags=["market"])
 app.include_router(pattern_router, prefix="/api", tags=["patterns"])
 app.include_router(risk_router, prefix="/api", tags=["risk"])
+app.include_router(multi_agent_router, tags=["multi-agent"])
+app.include_router(ai_enhanced_router, tags=["ai-enhanced"])
 
 
 @app.get("/")
