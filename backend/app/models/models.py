@@ -1,8 +1,16 @@
-from pydantic import BaseModel
-from typing import Optional, List
+from pydantic import BaseModel, Field
+from typing import Optional, List, Literal
+from datetime import datetime
+
+
+# ============================================================================
+# NEWS & SOCIAL MEDIA MODELS
+# ============================================================================
 
 
 class NewsArticle(BaseModel):
+    """News article from Yahoo Finance or Google News"""
+
     headline: str
     url: str
     source: Optional[str] = None
@@ -11,19 +19,30 @@ class NewsArticle(BaseModel):
 
 
 class NewsResponse(BaseModel):
+    """Collection of news articles"""
+
     articles: List[NewsArticle]
 
 
 class TelegramPost(BaseModel):
+    """Telegram channel post/message"""
+
     text: str
     date: str
-    sender_id: int | None = None
-    views: int | None = None
-    forwards: int | None = None
+    sender_id: Optional[int] = None
+    views: Optional[int] = None
+    forwards: Optional[int] = None
     channel: str
 
 
+# ============================================================================
+# STOCK INFO & PRICE DATA MODELS
+# ============================================================================
+
+
 class StockInfo(BaseModel):
+    """Real-time stock information from Yahoo Finance"""
+
     ticker: str
     current_price: float
     previous_close: float
@@ -34,15 +53,166 @@ class StockInfo(BaseModel):
     price_change_last_2h: float
 
 
+class OHLCVData(BaseModel):
+    """Single OHLCV candle data point with technical indicators"""
+
+    date: str
+    open: float
+    high: float
+    low: float
+    close: float
+    volume: int
+    price_change_pct: Optional[float] = None
+    volume_ma_20: Optional[float] = None
+    volume_ratio: Optional[float] = None
+    body: Optional[float] = None
+    upper_wick: Optional[float] = None
+    lower_wick: Optional[float] = None
+    wick_body_ratio: Optional[float] = None
+
+
+class OHLCVResponse(BaseModel):
+    """Collection of OHLCV data points"""
+
+    symbol: str
+    data: List[OHLCVData]
+    period: str = "3mo"
+
+
+# ============================================================================
+# SHAREHOLDING & OWNERSHIP MODELS
+# ============================================================================
+
+
 class Shareholding(BaseModel):
+    """Shareholding pattern from Screener.in"""
+
     promoter: float
     fii: float
     dii: float
     retail: float
     mf: float
     pledge: float
-    promoter_change: Optional[float]
-    fii_change: Optional[float]
-    dii_change: Optional[float]
-    retail_change: Optional[float]
-    mf_change: Optional[float]
+    promoter_change: Optional[float] = None
+    fii_change: Optional[float] = None
+    dii_change: Optional[float] = None
+    retail_change: Optional[float] = None
+    mf_change: Optional[float] = None
+
+
+# ============================================================================
+# DELIVERY, BULK & BLOCK DEAL MODELS
+# ============================================================================
+
+
+class DeliveryData(BaseModel):
+    """Daily delivery data from NSE Bhavcopy"""
+
+    date: str
+    close: Optional[float] = None
+    volume: Optional[int] = None
+    delivery_qty: Optional[int] = None
+    delivery_pct: Optional[float] = None
+
+
+class DeliveryResponse(BaseModel):
+    """Collection of delivery data"""
+
+    symbol: str
+    data: List[DeliveryData]
+
+
+class BulkDeal(BaseModel):
+    """Bulk deal from NSE"""
+
+    symbol: str
+    client_name: str
+    buy_sell: str  # "BUY" or "SELL"
+    quantity: int
+    price: float
+    date: str
+
+
+class BlockDeal(BaseModel):
+    """Block deal from NSE"""
+
+    symbol: str
+    client_name: str
+    buy_sell: str  # "BUY" or "SELL"
+    quantity: int
+    price: float
+    date: str
+
+
+# ============================================================================
+# PATTERN DETECTION MODELS
+# ============================================================================
+
+
+class Pattern(BaseModel):
+    """Detected manipulation pattern"""
+
+    pattern: str = Field(..., description="Pattern name/type")
+    severity: Literal["LOW", "MEDIUM", "HIGH", "CRITICAL"] = Field(
+        ..., description="Pattern severity level"
+    )
+    detail: str = Field(..., description="Detailed explanation of the pattern")
+    score: float = Field(..., ge=0, le=10, description="Pattern risk score (0-10)")
+
+
+class PatternResponse(BaseModel):
+    """Collection of detected patterns"""
+
+    symbol: str
+    patterns: List[Pattern]
+    total_patterns: int
+
+
+# ============================================================================
+# RISK ANALYSIS MODELS
+# ============================================================================
+
+
+class RiskReport(BaseModel):
+    """Complete risk analysis report"""
+
+    symbol: str
+    timestamp: str
+    risk_score: float = Field(..., ge=0, le=10, description="Overall risk score (0-10)")
+    risk_level: Literal["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+    latest_price: Optional[float] = None
+    price_change_pct: Optional[float] = None
+    volume: Optional[str] = None
+    delivery_pct: Optional[str] = None
+    patterns_detected: int
+    patterns: List[Pattern]
+    explanation: str = Field(..., description="AI-generated explanation of the risk")
+
+
+# ============================================================================
+# MARKET DATA WRAPPER MODELS
+# ============================================================================
+
+
+class MarketData(BaseModel):
+    """Complete market data for a symbol (wrapper for all fetched data)"""
+
+    symbol: str
+    ohlcv: Optional[List[OHLCVData]] = None
+    delivery: Optional[List[DeliveryData]] = None
+    bulk_deals: Optional[List[BulkDeal]] = None
+    block_deals: Optional[List[BlockDeal]] = None
+
+
+class CompleteAnalysis(BaseModel):
+    """Complete analysis result including all data sources"""
+
+    symbol: str
+    timestamp: str
+    stock_info: Optional[StockInfo] = None
+    shareholding: Optional[Shareholding] = None
+    news: Optional[List[NewsArticle]] = None
+    telegram_posts: Optional[List[TelegramPost]] = None
+    market_data: Optional[MarketData] = None
+    patterns: Optional[List[Pattern]] = None
+    risk_report: Optional[RiskReport] = None

@@ -19,3 +19,5 @@ PyJWT
 python-multipart
 httpx
 cryptography
+colorama
+tabulate

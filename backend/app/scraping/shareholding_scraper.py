@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from app.models.models import Shareholding
 import time
+import lxml
 
 
 def get_shareholding_from_screener(symbol: str) -> Shareholding:
