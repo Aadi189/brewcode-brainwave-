@@ -14,6 +14,7 @@ from app.api.market_routes import router as market_router
 from app.api.pattern_routes import router as pattern_router
 from app.api.risk_routes import router as risk_router
 
+j
 load_dotenv()
 
 app = FastAPI(
