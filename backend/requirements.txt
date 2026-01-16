@@ -21,3 +21,5 @@ httpx
 cryptography
 colorama
 tabulate
+supabase
+feedparser

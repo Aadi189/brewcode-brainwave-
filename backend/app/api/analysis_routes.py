@@ -1,7 +1,6 @@
 from fastapi import APIRouter
-from app.models.models import StockInfo, RedditPost, NewsArticle, NewsResponse
+from app.models.models import StockInfo, NewsArticle, NewsResponse
 from app.scraping.stock_info import stock_info
-from app.scraping.reddit_scraper import reddit_scraper
 from app.scraping.news_scraping import google_news_scraper, yahoo_news_scraper
 
 router = APIRouter()
@@ -19,3 +18,9 @@ def get_info(company: str, ticker: str):
         "google_news": google_news,
         "yahoo_news": yahoo_news,
     }
+
+@router.get("/diagnose/{company}/{ticker}")
+def diagnose(company: str, ticker: str):
+    """Diagnostic endpoint to debug scraping issues"""
+    from app.scraping.news_scraping import diagnose_network_issues
+    return diagnose_network_issues(company, ticker)
