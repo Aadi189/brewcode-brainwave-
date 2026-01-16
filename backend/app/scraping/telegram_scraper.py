@@ -6,10 +6,34 @@ from app.models.models import TelegramPost
 
 load_dotenv()
 
-api_id = int(os.getenv("TELEGRAM_API_ID"))
-api_hash = os.getenv("TELEGRAM_API_HASH")
+# Lazy initialization - only create client when actually needed
+_client = None
 
-client = TelegramClient("pumpdetect_session", api_id, api_hash)
+
+def _get_client():
+    """Get or create Telegram client with proper error handling."""
+    global _client
+
+    if _client is not None:
+        return _client
+
+    api_id = os.getenv("TELEGRAM_API_ID")
+    api_hash = os.getenv("TELEGRAM_API_HASH")
+
+    if not api_id or not api_hash:
+        raise ValueError(
+            "Telegram API credentials not found. "
+            "Please set TELEGRAM_API_ID and TELEGRAM_API_HASH environment variables. "
+            "Get them from https://my.telegram.org"
+        )
+
+    try:
+        api_id = int(api_id)
+    except ValueError:
+        raise ValueError("TELEGRAM_API_ID must be a valid integer")
+
+    _client = TelegramClient("pumpdetect_session", api_id, api_hash)
+    return _client
 
 
 async def fetch_telegram_messages(channel: str, stock: str, limit: int = 50):

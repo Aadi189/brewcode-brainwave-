@@ -7,7 +7,6 @@ from app.models.models import (
     StockInfo,
     Shareholding,
     NewsArticle,
-    TelegramPost,
     MarketData,
     Pattern,
     RiskReport,
@@ -16,7 +15,8 @@ from app.models.models import (
 from app.scraping.stock_info import stock_info
 from app.scraping.shareholding_scraper import shareholding_scraper
 from app.scraping.news_scraping import google_news_scraper, yahoo_news_scraper
-from app.scraping.telegram_scraper import get_telegram_posts_for_stock
+
+# from app.scraping.telegram_scraper import get_telegram_posts_for_stock  # Disabled
 from app.scraping.data_fetcher import MarketDataFetcher
 from app.scraping.pattern_detector import PatternDetector
 from app.scraping.risk_analyzer import RiskAnalyzer
@@ -28,13 +28,6 @@ router = APIRouter()
 def get_complete_analysis(
     symbol: str,
     company: str = Query(..., description="Company name for news search"),
-    include_telegram: bool = Query(
-        default=False, description="Include Telegram data (requires API credentials)"
-    ),
-    telegram_channels: List[str] = Query(
-        default=["powerofpennystock", "pennystockr", "stocktipsofficial"],
-        description="Telegram channels to scrape",
-    ),
     ohlcv_period: str = Query(default="3mo", description="OHLCV period"),
     delivery_days: int = Query(
         default=30, ge=1, le=90, description="Delivery data days"
@@ -78,16 +71,7 @@ def get_complete_analysis(
     except Exception as e:
         errors.append(f"News error: {str(e)}")
 
-    # 4. Telegram (optional)
-    if include_telegram:
-        try:
-            result["telegram_posts"] = get_telegram_posts_for_stock(
-                telegram_channels, symbol, 50
-            )
-        except Exception as e:
-            errors.append(f"Telegram error: {str(e)}")
-
-    # 5. Market data
+    # 4. Market data
     try:
         fetcher = MarketDataFetcher()
         data = fetcher.fetch_all_data(symbol)
@@ -126,7 +110,7 @@ def get_complete_analysis(
             block_deals=block_deals_list,
         )
 
-        # 6. Pattern detection
+        # 5. Pattern detection
         try:
             detector = PatternDetector()
             patterns = detector.detect_all_patterns(data)
@@ -142,7 +126,7 @@ def get_complete_analysis(
             ]
             result["patterns"] = pattern_models
 
-            # 7. Risk analysis
+            # 6. Risk analysis
             try:
                 analyzer = RiskAnalyzer()
                 report = analyzer.generate_report(symbol, data, patterns)

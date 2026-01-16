@@ -85,19 +85,36 @@ class OHLCVResponse(BaseModel):
 
 
 class Shareholding(BaseModel):
-    """Shareholding pattern from Screener.in"""
+    """Shareholding pattern from Screener.in with multi-quarter tracking"""
 
+    # Latest quarter values
     promoter: float
     fii: float
     dii: float
     retail: float
     mf: float
     pledge: float
+
+    # Quarter-over-Quarter changes (QoQ)
     promoter_change: Optional[float] = None
     fii_change: Optional[float] = None
     dii_change: Optional[float] = None
     retail_change: Optional[float] = None
     mf_change: Optional[float] = None
+
+    # Multi-quarter trends (3-4 quarters) - for detecting gradual exits
+    fii_trend_3q: Optional[float] = None  # Change over last 3 quarters
+    dii_trend_3q: Optional[float] = None
+    retail_trend_3q: Optional[float] = None
+    promoter_trend_3q: Optional[float] = None
+
+    # Flags for pattern detection
+    institutional_exit_pattern: Optional[bool] = (
+        None  # True if gradual FII/DII exit detected
+    )
+    retail_trap_risk: Optional[bool] = (
+        None  # True if retail accumulating while institutions exit
+    )
 
 
 # ============================================================================
