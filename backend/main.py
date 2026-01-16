@@ -5,10 +5,21 @@ from dotenv import load_dotenv
 from app.api import profile
 from app.middlewares.user import auth_middleware
 from app.api.analysis_routes import router as analysis_router
+from app.api.news_routes import router as news_router
+from app.api.stock_routes import router as stock_router
+from app.api.shareholding_routes import router as shareholding_router
+from app.api.telegram_routes import router as telegram_router
+from app.api.market_routes import router as market_router
+from app.api.pattern_routes import router as pattern_router
+from app.api.risk_routes import router as risk_router
 
 load_dotenv()
 
-app = FastAPI(title="Your API", version="1.0.0")
+app = FastAPI(
+    title="BrewCode Brainwave - Stock Analysis API",
+    version="2.0.0",
+    description="Comprehensive stock market analysis API with manipulation detection",
+)
 
 # CORS middleware (outermost - runs first)
 app.add_middleware(
@@ -29,7 +40,14 @@ app.add_middleware(
 
 # Include routers with prefix for better organization
 app.include_router(profile.router, prefix="/api", tags=["profile"])
-app.include_router(analysis_router, prefix="/api", tags=["analysis"])
+app.include_router(analysis_router, prefix="/api/analysis", tags=["analysis"])
+app.include_router(news_router, prefix="/api", tags=["news"])
+app.include_router(stock_router, prefix="/api", tags=["stock"])
+app.include_router(shareholding_router, prefix="/api", tags=["shareholding"])
+app.include_router(telegram_router, prefix="/api", tags=["telegram"])
+app.include_router(market_router, prefix="/api", tags=["market"])
+app.include_router(pattern_router, prefix="/api", tags=["patterns"])
+app.include_router(risk_router, prefix="/api", tags=["risk"])
 
 
 @app.get("/")
