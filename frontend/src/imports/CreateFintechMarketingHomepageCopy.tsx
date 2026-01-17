@@ -1,5 +1,5 @@
 import svgPaths from "./svg-lhrq8qyfo2";
-import imgContainer from "figma:asset/2562df5149e2267a5675b94b74b76590f6b57fb0.png";
+const imgContainer = "https://placehold.co/100x100";
 
 function Heading2() {
   return (
