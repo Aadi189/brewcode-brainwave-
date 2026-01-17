@@ -1,466 +1,131 @@
-# 🧠 BrewCode Brainwave - AI-Powered Stock Risk Intelligence System
+# 🧠 BrewCode Brainwave
 
-## 🎯 Project Overview
+> **MarketLens:AI-Powered Risk Intelligence System for Indian Stock Markets**  
 
-An **AI-enhanced multi-agent risk detection system** that combines traditional rule-based agents with **OnDemand AI's LLM capabilities** to detect stock market manipulation and pump-and-dump schemes in Indian markets.
 
-### Built for OnDemand Hackathon 2026
+[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.68+-green.svg)](https://fastapi.tiangolo.com/)
+[![OnDemand AI](https://img.shields.io/badge/AI-OnDemand_Platform-purple.svg)](https://on-demand.io/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
-## ✅ Hackathon Requirements Fulfilled
+## 🚀 The Problem
+Retail investors in India lose billions annually to sophisticated **pump-and-dump schemes**. They lack the institutional-grade tools to spot:
+*   **Retail Traps**: Institutions exiting while retail investors buy.
+*   **Manipulation**: Fake delivery volumes and circular trading.
+*   **Coordinated Hype**: "To the moon" narratives masking a dump.
 
-| Requirement | Implementation | Status |
-|-------------|----------------|--------|
-| **3+ Custom Tools** | Sentiment Analyzer, Chart Pattern Analyzer, Risk Prediction Engine | ✅ |
-| **6+ Agents** | Retail Trap, Delivery Spike, Microstructure, Bulk/Block Deals, Narrative Risk, Misinformation | ✅ |
-| **Chat API (Mandatory)** | OnDemand Chat API for sentiment analysis & predictions | ✅ |
-| **Media API (Mandatory)** | OnDemand Media API for chart pattern analysis | ✅ |
-| **Plugin/External APIs** | NSE, BSE, Yahoo Finance, Google News | ✅ |
+## 💡 The Solution
+**MarketLens** is a hybrid intelligence system that combines **6 specialized rule-based agents** with **3 advanced AI tools** powered by the **OnDemand Platform**. It doesn't just show data; it predicts risk, exposes manipulation, and explains it in plain English.
+
+---
+
+
+| Category | Requirement | Implementation | Status |
+|----------|-------------|----------------|--------|
+| **Custom Tools** | Min. 3 | **3 Custom Tools** (Sentiment, Chart, Prediction) | ✅ **Met** |
+| **Multi-Agent** | Min. 6 | **6 Specialized Agents** (defined below) | ✅ **Met** |
+| **Chat API** | Mandatory | Integrated for Sentiment & Prediction | ✅ **Met** |
+| **Media API** | Mandatory | Integrated for Visual Chart Analysis | ✅ **Met** |
+| **Ext. APIs** | Optional | NSE, BSE, Yahoo Finance, Google News | ✅ **Met** |
 
 ---
 
 ## 🏗️ System Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                    BrewCode Brainwave Risk System                        │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│  ┌────────────────────────────────────────────────────────────────────┐ │
-│  │               MULTI-AGENT SYSTEM (6 Specialized Agents)            │ │
-│  ├────────────────────────────────────────────────────────────────────┤ │
-│  │                                                                     │ │
-│  │  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐               │ │
-│  │  │   Agent 1    │ │   Agent 2    │ │   Agent 3    │               │ │
-│  │  │ Retail Trap  │ │  Delivery    │ │Microstructure│               │ │
-│  │  │   Detector   │ │    Spike     │ │ Manipulation │               │ │
-│  │  └──────────────┘ └──────────────┘ └──────────────┘               │ │
-│  │                                                                     │ │
-│  │  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐               │ │
-│  │  │   Agent 4    │ │   Agent 5    │ │   Agent 6    │               │ │
-│  │  │  Bulk/Block  │ │  Narrative   │ │Misinformation│               │ │
-│  │  │    Deals     │ │     Risk     │ │   Detector   │               │ │
-│  │  └──────────────┘ └──────────────┘ └──────────────┘               │ │
-│  │                                                                     │ │
-│  │                         ▼ Base Risk Score                          │ │
-│  └────────────────────────────────────────────────────────────────────┘ │
-│                                  │                                       │
-│  ┌────────────────────────────────────────────────────────────────────┐ │
-│  │            ONDEMAND AI ENHANCEMENT LAYER (3 Custom Tools)          │ │
-│  ├────────────────────────────────────────────────────────────────────┤ │
-│  │                                                                     │ │
-│  │  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐      │ │
-│  │  │   Tool 1        │ │   Tool 2        │ │   Tool 3        │      │ │
-│  │  │   Sentiment     │ │  Chart Pattern  │ │ Risk Prediction │      │ │
-│  │  │   Analyzer      │ │    Analyzer     │ │    Engine       │      │ │
-│  │  │  (Chat API)     │ │  (Media API)    │ │  (Chat API)     │      │ │
-│  │  └─────────────────┘ └─────────────────┘ └─────────────────┘      │ │
-│  │                                                                     │ │
-│  └────────────────────────────────────────────────────────────────────┘ │
-│                                  │                                       │
-│                    ▼ Final Combined Score (AI-Enhanced)                  │
-│                                                                          │
-│  ┌────────────────────────────────────────────────────────────────────┐ │
-│  │                    ENHANCED RISK ASSESSMENT                         │ │
-│  │  • Final Risk Score (0-100) & Level (LOW/MEDIUM/HIGH/CRITICAL)     │ │
-│  │  • Manipulation Type & Red Flags                                    │ │
-│  │  • Predicted Outcome & Timeline                                     │ │
-│  │  • AI-Generated Explanation & Recommendations                       │ │
-│  └────────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────────┘
+Our system uses a **Hybrid Architecture**:
+1.  **Layer 1 (The Watchdogs)**: 6 deterministic agents gather hard data signals.
+2.  **Layer 2 (The Brain)**: OnDemand AI analyzes these signals for patterns, context, and visual anomalies.
+
+```ascii
+┌──────────────────────┐      ┌─────────────────────────────┐
+│   Data Sources       │      │   6 Specialized Agents      │
+│ (NSE, BSE, News...)  │─────▶│ (Retail Trap, Delivery...)  │
+└──────────────────────┘      └─────────────┬───────────────┘
+                                            │ Signals
+                                            ▼
+┌──────────────────────┐      ┌─────────────────────────────┐
+│   OnDemand AI        │      │   3 Custom AI Tools         │
+│ (Chat & Media APIs)  │◀─────│ (Sentiment, Chart, Risk)    │
+└──────────────────────┘      └─────────────┬───────────────┘
+                                            │ Insights
+                                            ▼
+                              ┌─────────────────────────────┐
+                              │   FINAL RISK INTELLIGENCE   │
+                              │ Score • Prediction • Advice │
+                              └─────────────────────────────┘
 ```
 
 ---
 
 ## 🤖 The 6 Specialized Agents
+*Rule-based experts monitoring specific market signals:*
 
-### Agent 1: Retail Trap Detector 🎯
-**Purpose:** Identifies patterns where retail investors accumulate shares while institutional investors (FII/DII) exit.
+1.  🎯 **Retail Trap Detector**: Identifies when retail ownership rises while FII/DIIs (Institutions) exit.
+2.  📦 **Delivery Spike Detector**: Spots high delivery % spikes with no price movement (silent accumulation).
+3.  📊 **Microstructure Agent**: Detects intraday price manipulation, long wicks, and volume anomalies.
+4.  💼 **Bulk/Block Deal Agent**: Tracks insider activity, circular trading, and sell-heavy pressure.
+5.  📰 **Narrative Risk Agent**: Detects "hype" keywords (*rocket, multibagger, guaranteed*) in news.
+6.  🔍 **Misinformation Agent**: Scores news source credibility and flags unverified rumors.
 
-**Signals Detected:**
-- QoQ retail shareholding increase with FII/DII decrease
-- Multi-quarter gradual institutional exit patterns (3-4 quarters)
-- Severe FII exit (>5% decrease)
-- Dual institutional exit (both FII and DII exiting)
+## 🛠️ The 3 Custom AI Tools
+*Powered by OnDemand AI Platform:*
 
----
-
-### Agent 2: Delivery Spike Detector 📦
-**Purpose:** Detects high delivery percentages without corresponding price appreciation, indicating potential accumulation before a dump.
-
-**Signals Detected:**
-- High delivery (>70%) with minimal price gain (<2%)
-- Sustained high delivery over multiple days
-- Delivery spike without price response
-
----
-
-### Agent 3: Microstructure Manipulation Detector 📊
-**Purpose:** Analyzes candlestick patterns across multiple timeframes (10min, 15min, 30min) to detect price manipulation.
-
-**Signals Detected:**
-- Excessive wicks (wick-to-body ratio > 3)
-- Volume-price divergence
-- Repeated upper wick rejections
-- Doji patterns with high volume
+1.  💬 **Sentiment Analyzer Tool** (Chat API):
+    *   Goes beyond simple positive/negative.
+    *   Detects **manipulative intent** and coordinated media campaigns.
+2.  📈 **Chart Pattern Analyzer** (Media API):
+    *   Uses LLMs to "see" chart patterns.
+    *   Identifies visual anomalies like **wick rejection** and artificial price support.
+3.  🔮 **Risk Prediction Engine** (Chat API):
+    *   Predicts the **probability of a dump** within X days.
+    *   Generates confidence scores and alternative scenarios.
 
 ---
 
-### Agent 4: Bulk/Block Deals Detector 💼
-**Purpose:** Monitors large bulk and block deals for manipulation patterns.
+## 🏁 Quick Start
 
-**Signals Detected:**
-- High deal concentration (>10 deals)
-- Circular trading (same client buying AND selling)
-- Coordinated selling (3+ sellers on same day)
-- Sell-heavy activity
+### 1. Prerequisites
+*   Python 3.10+
+*   OnDemand API Key
 
----
-
-### Agent 5: Narrative Risk Detector 📰
-**Purpose:** Detects headline sentiment excess, hype language, and coordinated narrative pushing.
-
-**Signals Detected:**
-- Hype language (moon, rocket, guaranteed, multibagger)
-- Sentiment excess (>70% highly positive articles)
-- Coordinated narrative across sources
-- Article flood (>15 articles)
-
----
-
-### Agent 6: Misinformation Detector 🔍
-**Purpose:** Assesses misinformation probability and source credibility.
-
-**Signals Detected:**
-- Low source credibility
-- Low credibility language (anonymous sources, unconfirmed)
-- Information inconsistency
-- Missing source attribution
-
----
-
-## 🛠️ The 3 Custom Tools (OnDemand AI)
-
-### Tool 1: Sentiment Analyzer Tool 💬
-**API:** OnDemand Chat API (Mandatory)
-**Purpose:** Analyzes financial news sentiment with domain-specific context and manipulation detection.
-
-**Features:**
-- Domain-specific financial sentiment analysis
-- Hype language detection with custom keywords
-- Source credibility scoring (trusted vs untrusted sources)
-- Manipulation indicator scoring
-- Coordinated narrative detection
-
----
-
-### Tool 2: Chart Pattern Analyzer Tool 📈
-**API:** OnDemand Media API (Mandatory)  
-**Purpose:** Analyzes candlestick charts for visual manipulation patterns.
-
-**Features:**
-- Rule-based pattern detection
-- Visual chart description analysis via LLM
-- Multi-timeframe correlation
-- Manipulation pattern classification
-
----
-
-### Tool 3: Risk Prediction Engine Tool 🔮
-**API:** OnDemand Chat API
-**Purpose:** Predicts manipulation outcomes and timelines using AI.
-
-**Features:**
-- Historical pattern matching
-- Outcome prediction (pump_and_dump, legitimate, etc.)
-- Timeline estimation
-- Confidence scoring
-- Monitoring point generation
-
----
-
-## 🚀 Quick Start
-
-### 1. Install Dependencies
+### 2. Installation
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Clone the repo
+git clone https://github.com/Aadi189/brainwave-brewcode-.git
+cd brewcode-brainwave/backend
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Configure Environment
-Create/update `.env` file:
+### 3. Configuration
+Create a `.env` file in the `backend` directory:
+```env
+ONDEMAND_API_KEY=your_api_key_here
+ONDEMAND_BASE_URL=https://api.on-demand.io/
+```
+
+### 4. Run Server
 ```bash
-# OnDemand AI Platform Configuration (Required)
-ONDEMAND_API_KEY="your_ondemand_api_key"
-ONDEMAND_BASE_URL="https://api.on-demand.io/"
-
-# Optional - Supabase for user auth
-SUPABASE_URL="your_supabase_url"
-SUPABASE_KEY="your_supabase_key"
+uvicorn main:app --reload
 ```
-
-### 3. Start the Server
-```bash
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
-
-### 4. Open FastAPI Docs
-Navigate to: **http://localhost:8000/docs**
+Access the API Docs at: `http://localhost:8000/docs`
 
 ---
 
-## 📡 API Routes for Demo Testing
+## 📡 Key API Endpoints
 
-### Access Swagger UI
-Open **http://localhost:8000/docs** in your browser to access the interactive API documentation.
-
----
-
-## 🧪 Demo Test Cases (FastAPI /docs)
-
-### 1. Health Check
-**Route:** `GET /api/ai-enhanced/health`
-**Parameters:** None
-**Purpose:** Verify OnDemand AI connection is working
-
-**Expected Response:**
-```json
-{
-  "status": "healthy",
-  "ondemand_connected": true,
-  "api_key_configured": true,
-  "test_response": "OK",
-  "timestamp": "2026-01-17T00:10:00"
-}
-```
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/ai-enhanced/analyze/{symbol}` | **Full Analysis**: Combines Agents + AI Tools. |
+| `GET` | `/api/ai-enhanced/quick-scan/{symbol}` | **Quick Scan**: Fast AI sentiment check. |
+| `POST` | `/api/ai-enhanced/batch-analyze` | **Batch**: Analyze multiple stocks at once. |
+| `GET` | `/api/multi-agent/analyze/{symbol}` | **Agent View**: Raw signals from the 6 agents. |
 
 ---
 
-### 2. AI-Enhanced Full Analysis ⭐ (Main Demo Route)
-**Route:** `GET /api/ai-enhanced/analyze/{symbol}`
+## � Why This Matters?
+We built this to protect the **common investor**. While institutions have terminals and armies of analysts, retail investors are often the victims of manufactured hype. BrewCode Brainwave gives them an **AI-powered shield**.
 
-**Demo Parameters:**
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| `symbol` (path) | `RELIANCE` | Stock symbol |
-| `use_ai` (query) | `true` | Enable OnDemand AI |
-| `ai_weight` (query) | `0.3` | AI score weight (0-1) |
-| `enable_predictions` (query) | `true` | Enable outcome predictions |
-| `enable_sentiment` (query) | `true` | Enable sentiment analysis |
-| `include_shareholding` (query) | `true` | Include Agent 1 |
-| `include_delivery` (query) | `true` | Include Agent 2 |
-| `include_microstructure` (query) | `true` | Include Agent 3 |
-| `include_deals` (query) | `true` | Include Agent 4 |
-| `include_news` (query) | `true` | Include Agents 5 & 6 |
-
-**Test URL:**
-```
-/api/ai-enhanced/analyze/RELIANCE?use_ai=true&ai_weight=0.3&enable_predictions=true
-```
-
-**Other good symbols to test:** `TCS`, `WIPRO`, `INFY`, `HDFCBANK`
-
----
-
-### 3. Quick AI Scan (Fast Demo)
-**Route:** `GET /api/ai-enhanced/quick-scan/{symbol}`
-
-**Demo Parameters:**
-| Parameter | Value |
-|-----------|-------|
-| `symbol` (path) | `TCS` |
-
-**Test URL:**
-```
-/api/ai-enhanced/quick-scan/TCS
-```
-
-**Purpose:** Fast sentiment-based analysis (2-3 seconds) - great for quick demos!
-
----
-
-### 4. Batch Analysis
-**Route:** `POST /api/ai-enhanced/batch-analyze`
-
-**Demo Parameters (Query):**
-| Parameter | Value |
-|-----------|-------|
-| `symbols` | `RELIANCE` |
-| `symbols` | `TCS` |
-| `symbols` | `WIPRO` |
-| `quick_mode` | `true` |
-
-**Test URL:**
-```
-/api/ai-enhanced/batch-analyze?symbols=RELIANCE&symbols=TCS&symbols=WIPRO&quick_mode=true
-```
-
----
-
-### 5. Traditional Multi-Agent Analysis (No AI)
-**Route:** `GET /api/multi-agent/analyze/{symbol}`
-
-**Demo Parameters:**
-| Parameter | Value |
-|-----------|-------|
-| `symbol` (path) | `INFY` |
-
-**Test URL:**
-```
-/api/multi-agent/analyze/INFY
-```
-
-**Purpose:** Shows base 6-agent analysis without OnDemand AI enhancement - useful for comparison!
-
----
-
-### 6. Get Agent Weights
-**Route:** `GET /api/multi-agent/weights`
-
-**Parameters:** None
-
-**Purpose:** Shows current agent weights (expert + learned blending)
-
----
-
-### 7. Agent Information
-**Route:** `GET /api/multi-agent/agent-info`
-
-**Parameters:** None
-
-**Purpose:** Get detailed info about all 6 agents and their capabilities
-
----
-
-## 📊 Demo Script for Judges
-
-### Step 1: Show OnDemand Connection
-```bash
-curl http://localhost:8000/api/ai-enhanced/health
-```
-✅ Proves OnDemand API is connected and working
-
-### Step 2: Traditional Analysis (Base Agents)
-```bash
-curl http://localhost:8000/api/multi-agent/analyze/RELIANCE
-```
-✅ Shows 6 agents working independently
-
-### Step 3: AI-Enhanced Analysis
-```bash
-curl "http://localhost:8000/api/ai-enhanced/analyze/RELIANCE?use_ai=true"
-```
-✅ Shows OnDemand AI enhancement with:
-- LLM-powered manipulation detection
-- AI sentiment analysis  
-- Outcome predictions
-- Natural language explanations
-
-### Step 4: Compare Scores
-- **Base Risk Score:** From traditional agents
-- **AI Manipulation Score:** From OnDemand tools
-- **Final Risk Score:** Blended combination
-
-### Step 5: Batch Processing
-```bash
-curl -X POST "http://localhost:8000/api/ai-enhanced/batch-analyze?symbols=RELIANCE&symbols=TCS&symbols=WIPRO&quick_mode=true"
-```
-✅ Shows scalable multi-stock analysis
-
----
-
-## 📁 Project Structure
-
-```
-backend/
-├── app/
-│   ├── ai/
-│   │   ├── ondemand_client.py          # ⭐ OnDemand API client
-│   │   ├── ai_enhanced_risk_system.py  # ⭐ AI-enhanced system
-│   │   └── multi_agent_risk_system.py  # ⭐ 6 Agents implementation
-│   ├── api/
-│   │   ├── ai_enhanced_routes.py       # ⭐ AI-enhanced endpoints
-│   │   └── multi_agent_analysis.py     # Multi-agent endpoints
-│   ├── tools/
-│   │   ├── sentiment_analyzer_tool.py  # ⭐ Custom Tool 1 (Chat API)
-│   │   ├── chart_pattern_analyzer_tool.py  # ⭐ Custom Tool 2 (Media API)
-│   │   ├── risk_prediction_engine_tool.py  # ⭐ Custom Tool 3 (Chat API)
-│   │   └── tool_registry.py            # Tool management
-│   ├── scraping/                        # Data scrapers
-│   └── models/                          # Pydantic models
-├── test_ondemand.py                     # ⭐ Requirement verification
-├── requirements.txt
-└── main.py                              # FastAPI app
-```
-
----
-
-## 🔑 Key Technical Highlights
-
-### OnDemand API Integration
-- **Session-based Chat API:** Creates sessions, submits queries
-- **Proper Authentication:** Uses `apikey` header
-- **Multiple Endpoints:** Sentiment, manipulation detection, predictions
-
-### Intelligent Aggregation
-- **Dynamic Weight Assignment:** Each agent has configurable weights
-- **Co-occurrence Amplification:** Multiple signals = amplified risk
-- **Drawdown-based Learning:** System learns from historical outcomes
-
-### Graceful Degradation
-- Falls back to traditional analysis if OnDemand unavailable
-- Error handling with meaningful defaults
-- Each component can fail independently
-
----
-
-## 📈 Performance Metrics
-
-| Operation | Response Time |
-|-----------|--------------|
-| Health Check | ~1 second |
-| Quick Scan | ~3-5 seconds |
-| Full Analysis | ~8-15 seconds |
-| Batch (5 stocks) | ~15-30 seconds |
-
----
-
-## 🏆 Why This Project Stands Out
-
-1. **Real Problem:** Stock manipulation costs investors billions
-2. **Hybrid Intelligence:** Rules + AI = Best of both worlds
-3. **OnDemand Showcase:** Demonstrates platform capabilities
-4. **Production-Ready:** Scalable, tested, documented
-5. **Explainable AI:** Clear reasoning, not a black box
-6. **Indian Market Focus:** Tailored for NSE/BSE
-
----
-
-## 📞 Quick Reference
-
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/api/ai-enhanced/health` | GET | Check OnDemand connection |
-| `/api/ai-enhanced/analyze/{symbol}` | GET | Full AI-enhanced analysis |
-| `/api/ai-enhanced/quick-scan/{symbol}` | GET | Fast sentiment scan |
-| `/api/ai-enhanced/batch-analyze` | POST | Multi-stock analysis |
-| `/api/multi-agent/analyze/{symbol}` | GET | Traditional 6-agent analysis |
-| `/api/multi-agent/weights` | GET | View agent weights |
-| `/api/multi-agent/agent-info` | GET | Agent documentation |
-
----
-
-## 🎉 Ready for Hackathon!
-
-```
-✅ 3+ Custom Tools (Sentiment, Chart, Prediction)
-✅ 6+ Agents (Retail Trap, Delivery, Microstructure, Bulk/Block, Narrative, Misinformation)
-✅ Chat API Integration (Mandatory)
-✅ Media API Integration (Mandatory)
-✅ External APIs (NSE, BSE, Yahoo, Google News)
-```
-
-**Built with ❤️ by BrewCode Brainwave for OnDemand Hackathon 2026** 🚀
