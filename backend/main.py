@@ -35,6 +35,7 @@ app.add_middleware(
         "http://127.0.0.1:3000",
         "http://127.0.0.1:8000",
         "http://localhost:8000",
+        "https://brewcode-brainwave-8g69.vercel.app/"
         "*",  # Allow all for hackathon demo
     ],
     allow_credentials=True,
